@@ -5,7 +5,7 @@ from setuptools import setup
 long_description = open("README.md", encoding="utf-8").read()
 description = "Pyside6CustomWidgets Collect Custom widget in one place"
 
-version = "0.1"
+version = "0.2"
 
 
 setup(
