@@ -75,7 +75,6 @@ class Toast(QWidget):
 
     def bottom(self):
         if self.parent:
-            print(self.layout_width, self.width())
             toast_x = self.parent.x() + int((self.parent.width() - self.layout_width) / 2)
             toast_y = self.parent.y() + int((self.parent.height() - self.layout_height))
             self.move(toast_x, toast_y)
