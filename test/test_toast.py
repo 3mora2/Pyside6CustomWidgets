@@ -18,9 +18,11 @@ class Window(QWidget):
         self.mainToggle.setFixedSize(self.mainToggle.sizeHint())
         self.mainToggle.clicked.connect(lambda x: print("- checked"))
         layout.addWidget(self.mainToggle)
+        self.lines = ["Pyside6 Toast"]
 
     def show_toast(self):
-        Toast("Pyside6 Toast", parent=self, position="bottom").show()
+        Toast("\n".join(self.lines), parent=self, position="center").show()
+        self.lines.append(f"line {len(self.lines)}"*len(self.lines))
 
     def show_toaster(self):
         t = QToaster()

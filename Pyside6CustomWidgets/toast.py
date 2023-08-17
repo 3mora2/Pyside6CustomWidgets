@@ -35,8 +35,9 @@ class Toast(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Tool | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Set the window to be transparent
         # ToDo: Adjust Size to message
-        self.setMinimumSize(QSize(*self.MinimumSize))
-        self.setMaximumSize(QSize(*self.MaximumSize))
+        # self.setMinimumSize(QSize(*self.MinimumSize))
+        # self.setMaximumSize(QSize(*self.MaximumSize))
+
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(*self.ContentsMargins)
         self.setLayout(self.layout)
@@ -52,10 +53,19 @@ class Toast(QWidget):
         else:
             self.center()
 
+    @property
+    def layout_height(self):
+        return self.layout.minimumSize().height()
+
+    @property
+    def layout_width(self):
+        return self.layout.minimumSize().width()
+
     def center(self):
         if self.parent:
-            toast_x = self.parent.x() + int((self.parent.width() - self.width()) / 2)
-            toast_y = self.parent.y() + int((self.parent.height() - self.height()) / 2 + 40)
+
+            toast_x = self.parent.x() + int((self.parent.width() - self.layout_width) / 2)
+            toast_y = self.parent.y() + int((self.parent.height() - self.layout_height) / 2 + 40)
             self.move(toast_x, toast_y)
         else:
             screen = QGuiApplication.primaryScreen().size()
@@ -65,8 +75,9 @@ class Toast(QWidget):
 
     def bottom(self):
         if self.parent:
-            toast_x = self.parent.x() + int((self.parent.width() - self.width()) / 2)
-            toast_y = self.parent.y() + int((self.parent.height() - self.height()))
+            print(self.layout_width, self.width())
+            toast_x = self.parent.x() + int((self.parent.width() - self.layout_width) / 2)
+            toast_y = self.parent.y() + int((self.parent.height() - self.layout_height))
             self.move(toast_x, toast_y)
         else:
             screen = QGuiApplication.primaryScreen().size()
@@ -76,7 +87,7 @@ class Toast(QWidget):
 
     def top(self):
         if self.parent:
-            toast_x = self.parent.x() + int((self.parent.width() - self.width()) / 2)
+            toast_x = self.parent.x() + int((self.parent.width() - self.layout_width) / 2)
             toast_y = self.parent.y() + 40
             self.move(toast_x, toast_y)
         else:
@@ -86,19 +97,22 @@ class Toast(QWidget):
                       40)
 
     def init_ui(self, message):
-        message_label = QLabel()
-        size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        size_policy.setHorizontalStretch(0)
-        size_policy.setVerticalStretch(0)
-        size_policy.setHeightForWidth(message_label.sizePolicy().hasHeightForWidth())
-        message_label.setSizePolicy(size_policy)
-        message_label.setWordWrap(True)
-        message_label.setText(message)
-        message_label.setTextFormat(Qt.AutoText)
-        message_label.setScaledContents(True)
-        message_label.setObjectName("LabelMessage")
-        message_label.setAlignment(Qt.AlignCenter)
-        self.layout.addWidget(message_label)
+        self.message_label = QLabel()
+        if self.parent:
+            self.message_label.setMaximumSize(self.parent.size())
+        # size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.size_policy = QSizePolicy()
+        self.size_policy.setHorizontalStretch(0)
+        self.size_policy.setVerticalStretch(0)
+        self.size_policy.setHeightForWidth(self.message_label.sizePolicy().hasHeightForWidth())
+        self.message_label.setSizePolicy(self.size_policy)
+        self.message_label.setWordWrap(True)
+        self.message_label.setText(message)
+        self.message_label.setTextFormat(Qt.AutoText)
+        self.message_label.setScaledContents(True)
+        self.message_label.setObjectName("LabelMessage")
+        self.message_label.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.message_label)
 
     def create_animation(self, timeout):
         # 1. Define an animation
